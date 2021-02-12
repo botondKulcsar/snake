@@ -22,3 +22,7 @@ body {
 .snake {
     background: green;
 }
+
+.apple {
+    background: crimson;
+}
