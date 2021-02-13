@@ -1,11 +1,16 @@
 const grid = document.querySelector('.grid');
 const startButton = document.querySelector('#start');
-const score = document.querySelector('#score');
+const scoreDisplay = document.querySelector('#score');
 let squares = [];
 let currentSnake = [2, 1, 0];
 let direction = 1;
 const width = 10;
 let appleIndex = 0;
+let score = 0;
+let intervalTime = 1000;
+let speed = 0.9;
+let timerId = 0;
+
 
 function createGrid() {
     for (let i = 0; i < width ** 2; i++) {
@@ -20,6 +25,26 @@ createGrid();
 
 currentSnake.forEach(index => squares[index].classList.add('snake'));
 
+
+function startGame() {
+    // remove the 
+    currentSnake.forEach(el => squares[el].classList.remove('snake'))
+
+    // remove the apple
+    squares[appleIndex].classList.remove('apple');
+    clearInterval(timerId);
+    currentSnake = [2, 1, 0];
+    score = 0;
+    // re-add new score to browser
+    scoreDisplay.textContent = score;
+    direction = 1;
+    intervalTime = 1000;
+    generateApples()
+        // readdd the snkae cls 2 our current snake
+    currentSnake.forEach(part => squares[part].classList.add('snake'));
+    timerId = setInterval(move, intervalTime);
+}
+
 function move() {
     if (
         ((currentSnake[0] + width >= width ** 2) && (direction === width)) || // snake has hit bttom
@@ -30,11 +55,6 @@ function move() {
     ) {
         return clearInterval(timerId);
     }
-
-
-
-
-
     // remove last ele from currentSnake;
     const tail = currentSnake.pop()
         // remove styling from last ele
@@ -43,21 +63,28 @@ function move() {
     currentSnake.unshift(currentSnake[0] + direction);
     // add styling
     // deal with snake head gettin the apple
-    if () {
+    if (squares[currentSnake[0]].classList.contains('apple')) {
         // remove the class apple
+        squares[currentSnake[0]].classList.remove('apple');
         // grow snake by one (adding the class of snake 2 it)
+        squares[tail].classList.add('snake');
         // grow currentSnake
+        currentSnake.push(tail);
         // genereat new apple
+        generateApples();
         // increase score
+        score++;
+        scoreDisplay.textContent = score;
         // speed up snake
+        clearInterval(timerId);
+        intervalTime *= speed;
+        timerId = setInterval(move, intervalTime);
     }
-
-
     squares[currentSnake[0]].classList.add('snake');
 
 }
 
-let timerId = setInterval(move, 1000);
+
 
 function generateApples() {
     do {
@@ -91,3 +118,4 @@ function control(e) {
 }
 
 document.addEventListener('keydown', control);
+startButton.addEventListener('click', startGame);
